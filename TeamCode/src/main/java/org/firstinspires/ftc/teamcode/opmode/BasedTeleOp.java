@@ -281,7 +281,7 @@ public class BasedTeleOp extends LinearOpMode {
             })
             .transition(() -> timer.milliseconds() > 500 && (gamepad1.left_bumper || robot.intake.getDistance() < 3))
             .state(RobotState.BEFORE_GRAB_PAUSE)
-            .onExit(() -> timer.reset())
+            .onExit(timer::reset)
             .transitionTimed(0.3)
             .state(RobotState.GRABBED)
             .onEnter(() -> {
@@ -289,7 +289,8 @@ public class BasedTeleOp extends LinearOpMode {
                 robot.lift.setHorizontalPosition(horizontallifted);
             })
             .loop(this::grabbedLoop)
-            .onExit(() -> timer.reset())
+            .onExit(timer::reset)
+            .onExit(() -> robotState = RobotState.LIFTED)
             .transition(() -> shouldTransitionToLift)
             .state(RobotState.LIFTED)
             .onEnter(this::liftedOnEnter)
@@ -314,6 +315,7 @@ public class BasedTeleOp extends LinearOpMode {
             .onExit(() -> {
                 if(lowheight) robot.turret.setTargetAngle(front);
                 timer.reset();
+                robotState = RobotState.IDLE;
             })
             .transition(() -> !lowheight || timer.seconds() > 300)
             .build();
@@ -348,7 +350,8 @@ public class BasedTeleOp extends LinearOpMode {
                 robot.lift.setHorizontalPosition(horizontallifted);
             })
             .loop(this::grabbedLoop)
-            .onExit(() -> timer.reset())
+            .onExit(() -> robotState = RobotState.LIFTED)
+            .onExit(timer::reset)
             .transition(() -> shouldTransitionToLift)
             .state(StackStates.LIFTED)
             .onEnter(this::liftedOnEnter)
@@ -372,6 +375,7 @@ public class BasedTeleOp extends LinearOpMode {
             .onExit(() -> {
                 if(lowheight) robot.turret.setTargetAngle(front);
                 timer.reset();
+                robotState = RobotState.IDLE;
             })
             .transition(() -> !lowheight || timer.seconds() > 300)
             .build();
